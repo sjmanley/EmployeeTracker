@@ -5,9 +5,12 @@ Developers are often tasked with creating interfaces that make it easy for non-d
 <br>
 Created my database using the name Tracker_db
 <br>
+<br>
 Creating Tables to hold the info needed to populate my database.
+<br>
 <br>
 created the Server.js file to communicate with the sql files.
 <br>
-THe program will functions as a query to the Names, Employees, Departments, and roles.
+<br>
+The program will functions as a query to the Names, Employees, Departments, and roles.
 <br>
