@@ -24,6 +24,8 @@ function runSearch() {
         'View All Employees',
         'View Department',
         'View Employee by Role',
+        'Delete Employee',
+        'Add Employee',
         'EXIT']
 
     })
@@ -40,6 +42,14 @@ function runSearch() {
 
         case 'View Role':
           roleSearch()
+          break
+
+        case 'Delete Employee':
+          departmentSearch()
+          break
+
+        case 'Add Employee':
+          departmentSearch()
           break
 
         case 'exit':
@@ -78,7 +88,7 @@ function departmentSearch() {
         'IT Department']
     })
     .then(function (answer) {
-      connection.query(`SELECT * FROM department WHERE name = "${answer.choices}"`, function (err, res) {
+      connection.query(`SELECT * FROM department WHERE name = '${answer.choices}'`, function (err, res) {
         if (err) throw err
         console.table(res)
         runSearch()
@@ -106,10 +116,108 @@ function roleSearch() {
         'Creative']
     })
     .then(function (answer) {
-      connection.query(`SELECT * FROM role WHERE name = "${answer.choices}"`, function (err, res) {
+      connection.query(`SELECT * FROM role WHERE name = '${answer.choices}'`, function (err, res) {
         if (err) throw err
         console.table(res)
         runSearch()
       })
     })
+    
+  const addEmployee = () => {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          message: 'First name of new employee?',
+          name: 'first_name'
+        },
+        {
+          type: 'input',
+          message: 'Last name of new employee?',
+          name: 'last_name'
+        },
+
+        {
+          type: 'number',
+          message: 'ID of new employee?',
+          name: 'employee_id'
+        },
+        {
+          type: 'number',
+          message: 'Manager ID of new employee?',
+          name: 'manager_id'
+        }
+      ])
+      .then(answer => {
+        const query = `INSERT INTO employee (first_name, last_name,employee_id, manager_id) VALUE ('${answer.first_name}' '${answer.last_name}' '${answer.employee_id}' '${answer.manager_id}')`
+        connection.query(query, function (err, res) {
+          if (err) throw err
+          console.table(res)
+          run()
+        })
+      })
+  }
+
+  const employeeRole = () => {
+
+    connection.query('SELECT * FROM employee', function (err, res) {
+      if (err) throw err
+      console.table(res)
+      inquirer
+        .prompt([
+          {
+            type: 'Number',
+            message: 'ID of employee you would like to update?',
+            name: 'id'
+          },
+          {
+            type: 'number',
+            message: 'What new role ID are you assigning the employee?',
+            name: 'role_id'
+          }
+        ]).then(answer => {
+          const query = `UPDATE employee SET role_id = '${answer.role_id}' WHERE id = ${answer.id}`
+          connection.query(query, function (err, res) {
+            if (err) throw err
+            console.log('Role updated.')
+            run()
+          })
+        })
+    })
+  }
+  const deleteEmployee = () => {
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          message: 'Employee first name?',
+          name: 'first_name'
+        },
+        {
+          type: 'input',
+          message: 'Employee last name?',
+          name: 'last_name'
+        },
+
+        {
+          type: 'number',
+          message: 'Employee role ID?',
+          name: 'employee_id'
+        },
+        {
+          type: 'number',
+          message: 'Manager ID of the employee?',
+          name: 'manager_id'
+        }
+      ])
+
+      .then(answer => {
+        const query = `DELETE FROM employee WHERE(first_name, last_name, salary, employee_id, manager_id) =('${answer.first_name}' '${answer.last_name}' '${answer.salary}' '${answer.role_id}' '${answer.manager_id}')`
+        connection.query(query, function (err, res) {
+          if (err) throw err
+          console.table(res)
+          run()
+        })
+      })
+  };
 }
